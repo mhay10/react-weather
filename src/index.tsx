@@ -1,5 +1,4 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import { CollectData } from "./Weather";
+import { GetLocation } from "./Location";
 
-ReactDOM.render(<CollectData />,  document.getElementById("app"));
+ReactDOM.render(<GetLocation />,  document.getElementById("app"));
