@@ -1,4 +1,4 @@
 import ReactDOM from 'react-dom';
-import { GetLocation } from "./Location";
+import { GetGeoLocation } from "./Location";
 
-ReactDOM.render(<GetLocation />,  document.getElementById("app"));
+ReactDOM.render(<GetGeoLocation />,  document.getElementById("app"));
