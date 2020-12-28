@@ -11,7 +11,7 @@ interface LocationProps {
     currentLocation: string;
 }
 
-export class GetLocation extends React.Component<LocationProps, GetLocationState> {
+class GetLocation extends React.Component<LocationProps, GetLocationState> {
     constructor(props: LocationProps) {
         super(props);
         this.state = { location: '', submit: false };
@@ -46,14 +46,14 @@ export class GetLocation extends React.Component<LocationProps, GetLocationState
 
 interface GetGeoLocationState {
     location: string;
-    lat: ;
+    lat: number;
     long: number;
 }
 
 export class GetGeoLocation extends React.Component<{}, GetGeoLocationState> {
     constructor(props: any) {
         super(props);
-        this.state = { location: '' };
+        this.state = { location: '' , lat: 0, long: 0 };
         this.locationChanged = this.locationChanged.bind(this);
         this.getLatLong = this.getLatLong.bind(this);
     }
@@ -71,18 +71,17 @@ export class GetGeoLocation extends React.Component<{}, GetGeoLocationState> {
 
         axios.get('https://geocode.xyz', { params }).then((res: AxiosResponse) => {
             this.setState({
-                lat: res.data.latt,
-                long: res.data.longt
-            })
-        })
-
-
+                lat: Number(res.data.latt),
+                long: Number(res.data.longt)
+            });
+        });
     }
 
     render() {
         return (
             <div>
                 <GetLocation onLocationChange={this.locationChanged} currentLocation={this.state.location} />
+                <p>Lat: {this.state.lat}, Long: {this.state.long}</p>
             </div>
         )
     }
