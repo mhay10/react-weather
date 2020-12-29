@@ -24,7 +24,7 @@ export class WeatherApp extends React.Component<{}, WeatherAppState> {
 
     geocode() {
         const params = {
-            locate: this.props.location,
+            locate: this.state.location,
             json: 1
         }
 
@@ -47,7 +47,7 @@ export class WeatherApp extends React.Component<{}, WeatherAppState> {
             <div>
                 <Location onLocationChange={this.locationChanged} currentLocation={this.state.location}/>
                 <p>{this.state.location}</p>
-                <Forecast location={this.state.location}/>
+                <Forecast location={this.state.location} lat={this.state.lat.toString()} long={this.state.long.toString()}/>
             </div>
         );
     }
