@@ -1,5 +1,5 @@
 import React from 'react';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { Location } from './Location';
 import { Forecast } from './Forecast';
 
@@ -27,34 +27,38 @@ export class WeatherApp extends React.Component<{}, WeatherAppState> {
 
         this.locationChanged = this.locationChanged.bind(this);
         this.geocode = this.geocode.bind(this);
+        this.forecastUrl = this.forecastUrl.bind(this);
+        this.forecastData = this.forecastData.bind(this);
     }
 
     locationChanged(location: string) {
         this.setState({ location: location });
-
         setTimeout(() => this.geocode());
     }
 
-    geocode() {
-        const params = {
-            locate: this.state.location,
-            json: 1
-        }
+    async geocode() {
+        const params = { locate: this.state.location, json: 1 };
+        const geocodeRes = await axios.get('https://geocode.xyz', { params });
 
-        axios.get('https://geocode.xyz', { params }).then((res: AxiosResponse) => {
-            this.setState({
-                lat: res.data.latt,
-                long: res.data.longt
-            });
-
-            axios.get(`https://api.weather.gov/points/${this.state.lat},${this.state.long}`).then((res: AxiosResponse) => {
-                this.setState({ forecastUrl: <res className="data properties forecastHourly"></res> });
-            })
+        this.setState({
+            lat: geocodeRes.data.latt,
+            long: geocodeRes.data.longt
         });
+
+        await this.forecastUrl();
+        await this.forecastData();
     }
 
-    forecast() {
+    async forecastUrl() {
+        const gridIdRes = await axios.get(`https://api.weather.gov/points/${this.state.lat},${this.state.long}`);
+        
+        this.setState({ forecastUrl: gridIdRes.data.properties.forecastHourly });
+    }
 
+    async forecastData() {
+        const forecastUrlRes = await axios.get(this.state.forecastUrl.toString());
+        
+        this.setState({ forecastData: forecastUrlRes.data.properties.periods });
     }
 
     render() {
@@ -62,6 +66,7 @@ export class WeatherApp extends React.Component<{}, WeatherAppState> {
             <div>
                 <Location onLocationChange={this.locationChanged} currentLocation={this.state.location} />
                 <Forecast location={this.state.location} lat={this.state.lat} long={this.state.long} />
+                <p>{this.state.forecastUrl}</p>
             </div>
         );
     }
