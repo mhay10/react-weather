@@ -1,88 +1,43 @@
-import React from "react";
-import axios, { AxiosResponse } from 'axios';
-
-interface GetLocationState {
-    location: string;
-    submit: boolean;
-}
+import React from 'react';
 
 interface LocationProps {
     onLocationChange: (location: string) => void;
     currentLocation: string;
 }
 
-class GetLocation extends React.Component<LocationProps, GetLocationState> {
+interface LocationState {
+    location: string
+}
+
+export class Location extends React.Component<LocationProps, LocationState> {
     constructor(props: LocationProps) {
         super(props);
-        this.state = { location: '', submit: false };
-        this.updateLocation = this.updateLocation.bind(this);
+
+        this.state = { location: '' };
+
+        this.getLocation = this.getLocation.bind(this);
         this.submitLocation = this.submitLocation.bind(this);
     }
 
-    updateLocation(e: any) {
-        this.setState({ location: e.target.value})
+    getLocation(e: any) {
+        this.setState({ location: e.target.value });
     }
 
     submitLocation() {
         if (this.state.location.length <= 1) {
             this.setState({ location: 'Please enter a location' });
-            this.setState({ submit: false });
         } else {
             this.props.onLocationChange(this.state.location);
-            this.setState({ submit: true });
         }
     }
 
     render() {
         return (
             <div>
-                <input type="text" onChange={this.updateLocation} />
+                <input type="text" placeholder="City Name" onChange={this.getLocation}/>
                 <button type="submit" onClick={this.submitLocation}>Submit Location</button>
                 <p>{this.state.location}</p>
             </div>
         );
-    }
-}
-
-interface GetGeoLocationState {
-    location: string;
-    lat: number;
-    long: number;
-}
-
-export class GetGeoLocation extends React.Component<{}, GetGeoLocationState> {
-    constructor(props: any) {
-        super(props);
-        this.state = { location: '' , lat: 0, long: 0 };
-        this.locationChanged = this.locationChanged.bind(this);
-        this.getLatLong = this.getLatLong.bind(this);
-    }
-
-    locationChanged(location: string) {
-        this.setState({ location: location });
-        setTimeout(() => this.getLatLong());
-    }
-
-    getLatLong() {
-        const params =  {
-            locate: this.state.location,
-            json: 1
-        }
-
-        axios.get('https://geocode.xyz', { params }).then((res: AxiosResponse) => {
-            this.setState({
-                lat: Number(res.data.latt),
-                long: Number(res.data.longt)
-            });
-        });
-    }
-
-    render() {
-        return (
-            <div>
-                <GetLocation onLocationChange={this.locationChanged} currentLocation={this.state.location} />
-                <p>Lat: {this.state.lat}, Long: {this.state.long}</p>
-            </div>
-        )
     }
 }
