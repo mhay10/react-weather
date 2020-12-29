@@ -48,7 +48,7 @@ export class WeatherApp extends React.Component<{}, WeatherAppState> {
             });
 
             axios.get(`https://api.weather.gov/points/${this.state.lat},${this.state.long}`).then((res: AxiosResponse) => {
-                this.setState({ forecastUrl: res.data.properties.forecast });
+                this.setState({ forecastUrl: <res className="data properties forecastHourly"></res> });
             })
         });
     }
